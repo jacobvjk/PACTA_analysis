@@ -407,7 +407,7 @@ classify_all_funds <- function(fin_data){
 }
 
 normalise_fund_data <- function(fund_data){
-  
+  # this should get a re-write, some of the grouping is a bit unclear in terms of dplyr logic
   if(data_check(fund_data)){
     fund_data <- fund_data %>% group_by(fund_isin) %>%
       mutate(total_weight = sum(isin_weight,na.rm = T))
@@ -453,15 +453,15 @@ convert_currencies <- function(portfolio, currencies){
 add_fin_data <- function(portfolio, fin_data){
   
   portfolio_no_isin <- portfolio %>% filter(is.na(isin))
-  
+
   portfolio_isin <- portfolio %>% filter(!is.na(isin))
-  
+
   portfolio_fin <- left_join(portfolio_isin, fin_data, by = "isin")
-  
+
   portfolio_fin <- bind_rows(portfolio_fin, portfolio_no_isin)
-  
+
   portfolio_fin
-  
+
 }
 
 calculate_value_usd_with_fin_data <- function(portfolio){
@@ -499,7 +499,8 @@ identify_fund_portfolio <- function(portfolio){
 calculate_fund_portfolio <- function(fund_portfolio, fund_data, cols_portfolio_no_bbg = cols_portfolio, cols_funds = cols_of_funds){
   
   if (data_check(fund_portfolio)){
-    fund_portfolio <-left_join(fund_portfolio, fund_data, by=c("isin"="fund_isin"), all.x = T)
+    #fund_portfolio <-left_join(fund_portfolio, fund_data, by=c("isin"="fund_isin"), all.x = T)
+    fund_portfolio <-left_join((fund_portfolio %>% select(cols_portfolio)), (fund_data %>% select(-fund_type)), by=c("isin"="fund_isin"), all.x = T)
     fund_portfolio$direct_holding <- FALSE
     
     fund_portfolio$original_value_usd <- fund_portfolio$value_usd
@@ -535,7 +536,7 @@ add_fund_portfolio <- function(portfolio, fund_portfolio, cols_of_funds){
   # Check that there are the correct number of isins in both portfolios
   if(nrow(portfolio_no_funds) + length(unique(fund_portfolio$holding_id)) != nrow(portfolio)){stop("Something unexpected with fund portfolio merge")}
   
-  # Add additional fund relevant lines to original portfolio
+  # Add additional fund relevant columns to original portfolio
   portfolio_no_funds <- portfolio_no_funds %>%
     mutate(direct_holding = TRUE,
            fund_isin = NA,
@@ -837,7 +838,7 @@ get_and_clean_fund_data <- function(){
   if (data_check(fund_data)){
     
     fund_data <- fund_data %>% janitor::clean_names()
-    
+    # keep only entries that have non-empty holding_isin
     fund_data <- fund_data %>% filter(!is.na(holding_isin) & holding_isin != "")
     
     fund_data <- normalise_fund_data(fund_data)
