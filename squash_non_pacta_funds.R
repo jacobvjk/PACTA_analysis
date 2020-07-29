@@ -1,6 +1,8 @@
 library(tidyverse)
 library(lobstr)
 
+source("0_portfolio_input_check_initialisation.R")
+
 fund_data <- read_csv("/Users/jacobkastl/Dropbox (2° Investing)/PortCheck/00_Data/03_FundData/Lipper/projects/EIOPA/2019Q4/outputs/EIOPA_fund_data_2019Q4.csv")
 # fund_data <- read_rds("/Users/jacobkastl/Dropbox (2° Investing)/PortCheck/00_Data/03_FundData/Lipper/data/2019Q4/outputs/downloaded_fund_holdings_2019Q4.rds")
 # fund_data <- fund_data %>%
@@ -15,11 +17,16 @@ lobstr::obj_size(fund_data)
 # join the sector info of the fin data to the fund data and group all non pacta sectors into one row per fund
 # in order to save rows/memory
 
-## this requires the cleaned fund data.
-## i.e. apply get_and_clean_fund_data() after loading the EIOPA data
+# copied this from inside get_and_clean_fund_data()
+fund_data <- fund_data %>% janitor::clean_names()
+fund_data <- fund_data %>% filter(!is.na(holding_isin) & holding_isin != "")
+fund_data <- normalise_fund_data(fund_data)
+
+
+fin_data_prep <- get_and_clean_fin_data(fund_data)
 
 fund_reduced <- fund_data %>% 
-  left_join((fin_data %>% select(isin, security_mapped_sector)), by = c("holding_isin" = "isin"))
+  left_join((fin_data_prep %>% select(isin, security_mapped_sector)), by = c("holding_isin" = "isin"))
 
 
 non_pacta_sectors <- fund_reduced %>% 
