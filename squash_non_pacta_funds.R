@@ -8,7 +8,6 @@ fund_data <- read_csv("/Users/jacobkastl/Dropbox (2° Investing)/PortCheck/00_Dat
 # fund_data <- fund_data %>%
 #   select(fund_isin,holding_isin = isin,isin_weight = weight, fund_type = source)
 
-
 lobstr::obj_size(fund_data)
 
 
