@@ -1,12 +1,18 @@
 library(tidyverse)
 library(lobstr)
 
-source("0_portfolio_input_check_initialisation.R")
+source("1_portfolio_check_initialisation.R")
 
 fund_data <- read_csv("/Users/jacobkastl/Dropbox (2° Investing)/PortCheck/00_Data/03_FundData/Lipper/projects/EIOPA/2019Q4/outputs/EIOPA_fund_data_2019Q4.csv")
+fund_data_bbg <- read_csv("/Users/jacobkastl/Dropbox (2° Investing)/PortCheck/00_Data/03_FundData/Lipper/projects/EIOPA/2019Q4/outputs/EIOPA_funds_bbg.csv")
 # fund_data <- read_rds("/Users/jacobkastl/Dropbox (2° Investing)/PortCheck/00_Data/03_FundData/Lipper/data/2019Q4/outputs/downloaded_fund_holdings_2019Q4.rds")
 # fund_data <- fund_data %>%
 #   select(fund_isin,holding_isin = isin,isin_weight = weight, fund_type = source)
+
+fund_data_bbg %>% filter(Fund.ISIN %in% (fund_data %>% pull(Fund.ISIN))) %>% nrow()
+
+fund_data <- fund_data %>% 
+  bind_rows(fund_data_bbg)
 
 lobstr::obj_size(fund_data)
 
