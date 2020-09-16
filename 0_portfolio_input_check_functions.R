@@ -847,7 +847,10 @@ get_and_clean_fund_data <- function(){
   
   fund_data <- NA
   # Fund Data
-  if(file.exists(paste0(analysis_inputs_path,"fund_data_",financial_timestamp,".rda"))){
+  if(file.exists(paste0(analysis_inputs_path,"funds_2019Q4_reduced_for_meta.rds"))){
+    fund_data <- readRDS(paste0(analysis_inputs_path,"funds_2019Q4_reduced_for_meta.rds"))
+    print("Using foltered fund data for meta portfolio.")
+  } else if(file.exists(paste0(analysis_inputs_path,"fund_data_",financial_timestamp,".rda"))){
     fund_data <- readRDS(paste0(analysis_inputs_path,"fund_data_",financial_timestamp,".rda"))
   } else if(file.exists(paste0(analysis_inputs_path,"fund_data_",financial_timestamp,".rds"))){
     fund_data <- readRDS(paste0(analysis_inputs_path,"fund_data_",financial_timestamp,".rds"))
