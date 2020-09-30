@@ -18,7 +18,7 @@ library(jsonlite)
 library(fst)
 library(here)
 
-if (rstudioapi::isAvailable()) {
+if (interactive()) {
   portfolio_name_ref_all <- c("TestPortfolio_Input") # must be the same name as in the _PortfolioParameters.yml
   working_location <- here::here() 
   set_web_parameters(file_path = paste0(working_location,"/parameter_files/WebParameters_2dii.yml"))
@@ -28,7 +28,7 @@ if (rstudioapi::isAvailable()) {
   set_web_parameters(file_path = paste0(working_location,"/parameter_files/WebParameters_docker.yml"))
 }
 
-working_location <- paste0(here::here(), "/")
+working_location <- paste0(working_location, "/")
 
 set_webtool_paths()
 
