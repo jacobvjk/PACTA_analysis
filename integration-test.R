@@ -176,10 +176,19 @@ dir_has_files <- function(path) {
   has_files
 }
 
+# source another script with arguments
+source_with_args <- function(file, ...){
+  passArgs <<- function(trailingOnly){
+    list(...)
+  }
+  source(file)
+}
+
 out_1 <- path("working_dir", "30_Processed_Inputs")
 
 expect_false(dir_has_files(out_1))
 source("web_tool_script_1.R")
+# system(paste("Rscript web_tool_script_1.R", "TestPortfolio_Input"))
 expect_true(dir_has_files(out_1))
 
 
